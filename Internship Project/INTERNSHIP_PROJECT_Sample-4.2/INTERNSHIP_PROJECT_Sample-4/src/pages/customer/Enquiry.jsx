@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   MessageSquare, Plus, Clock, CheckCircle, XCircle, AlertCircle, Search,
   FileText, Send, Zap, X, User, Building, DollarSign, Layers,
-  Calendar, Package, Tag, ExternalLink, HelpCircle
+  Calendar, Package, Tag, ExternalLink, HelpCircle, Download
 } from 'lucide-react';
 import { TextInput, SelectInput, TextArea } from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -11,6 +11,9 @@ import Modal from '../../components/common/Modal';
 import { formatDate, formatRelativeTime, formatCurrency } from '../../utils/formatters';
 import { useApp } from '../../context/AppContext';
 import api from '../../utils/api';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import ProposalPDFPreview from '../../components/proposal/ProposalPDFPreview';
 
 const ENQUIRY_STATUSES = {
   Open: { label: 'Open', bg: 'bg-blue-100/80', text: 'text-blue-700', border: 'border-blue-300/60', icon: Clock },
@@ -40,25 +43,37 @@ export default function EnquiryPortal() {
   const [chatMessage, setChatMessage] = useState('');
   const chatEndRef = useRef(null);
 
-  const downloadProposalPDF = async (proposalId) => {
+  const [exportModal, setExportModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [previewProposal, setPreviewProposal] = useState(null);
+
+  const handleExport = async () => {
+    if (!previewProposal) return;
+    setExporting(true);
     try {
-      showToast('Generating PDF...', 'info');
-      const response = await api.get(`/proposals/${proposalId}/pdf`, {
-        responseType: 'blob'
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `Proposal_${proposalId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      showToast('PDF downloaded successfully!');
+      const input = document.getElementById('pdf-content');
+      if (!input) throw new Error('PDF content not found');
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const canvas = await html2canvas(input, { scale: 2, useCORS: true, logging: false, letterRendering: true });
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [800, 1131] });
+      pdf.addImage(imgData, 'PNG', 0, 0, 800, 1131);
+      const safeName = (previewProposal.clientName || 'Client').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      pdf.save(`proposal_${previewProposal.id || 'export'}_${safeName}.pdf`);
+      
+      showToast('Proposal exported successfully!', 'success');
+      setExportModal(false);
     } catch (error) {
-      console.error(error);
-      showToast('Failed to download PDF. Please try again.', 'error');
+      console.error('Error generating PDF:', error);
+      showToast('Failed to generate PDF. Please try again.', 'error');
+    } finally {
+      setExporting(false);
     }
   };
+
 
   const handleSendMessage = () => {
     if (!chatMessage.trim() || !selectedTicket) return;
@@ -751,25 +766,56 @@ export default function EnquiryPortal() {
                         }
                       }
                       
-                      if (!pId) {
+                      let proposalData = null;
+                      if (pId) {
+                        try {
+                          const res = await api.get(`/proposals/${pId}`);
+                          proposalData = res.data.data;
+                        } catch (e) {
+                          console.error("Failed to fetch specific proposal", e);
+                        }
+                      }
+                      
+                      if (!proposalData) {
                         try {
                           showToast('Locating latest proposal...', 'info');
                           const res = await api.get('/proposals');
                           const propsList = res.data.data?.proposals || res.data.data || [];
                           if (propsList.length > 0) {
                             propsList.sort((a, b) => b.id - a.id);
-                            pId = propsList[0].id;
+                            proposalData = propsList[0];
                           }
                         } catch (e) {
                           console.error("Fallback proposal fetch failed", e);
                         }
                       }
 
-                      if (pId) {
-                        downloadProposalPDF(pId);
-                      } else {
-                        showToast('No proposal found to download.', 'error');
-                      }
+                      // Create a mock proposal matching ProposalPDFPreview structure
+                      const finalProposal = {
+                        id: proposalData?.id || pId || `PRO-MOCK-${selectedTicket.id}`,
+                        clientName: proposalData?.client_name || selectedTicket.companyName || selectedTicket.customerName,
+                        contactPerson: selectedTicket.customerName,
+                        contactEmail: selectedTicket.customerEmail || 'client@example.com',
+                        clientType: proposalData?.client_type || 'Enterprise',
+                        occasion: proposalData?.occasion || selectedTicket.subject || 'Custom Request',
+                        quantity: proposalData?.quantity || 100,
+                        budget: proposalData?.budget_per_unit || 500,
+                        deliveryTimeline: proposalData?.created_at || new Date().toISOString(),
+                        aiRecommendations: proposalData?.items || [
+                          { name: 'Premium Tech Kit', price: 200, quantity: 100, why: 'Perfect premium gift for executives.' },
+                          { name: 'Engraved Metal Pen', price: 50, quantity: 100, why: 'Classic high-value addition.' }
+                        ],
+                        costSummary: {
+                          total: (proposalData?.budget_per_unit || 500),
+                          productCost: (proposalData?.budget_per_unit || 500) * 0.8,
+                          brandingCost: (proposalData?.budget_per_unit || 500) * 0.1,
+                          packagingCost: (proposalData?.budget_per_unit || 500) * 0.05,
+                          logisticsCost: (proposalData?.budget_per_unit || 500) * 0.05
+                        }
+                      };
+
+                      setPreviewProposal(finalProposal);
+                      setExportModal(true);
                     }}
                   >
                     View Generated Proposal
@@ -805,6 +851,28 @@ export default function EnquiryPortal() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <TextInput label="Related Order / Proposal ID (optional)" id="enq-order" value={form.attachOrder} onChange={e => set('attachOrder', e.target.value)} placeholder="e.g. PRO-001" />
             <TextInput label="Contact Phone (optional)" id="enq-phone" type="tel" value={form.contactPhone} onChange={e => set('contactPhone', e.target.value)} placeholder="+91 98765 43210" />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Export PDF Modal */}
+      <Modal
+        isOpen={exportModal}
+        onClose={() => setExportModal(false)}
+        title="Proposal Preview"
+        size="5xl"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setExportModal(false)}>Cancel</Button>
+            <Button icon={Download} onClick={handleExport} loading={exporting}>
+              {exporting ? 'Generating PDF...' : 'Download PDF'}
+            </Button>
+          </>
+        }
+      >
+        <div className="bg-slate-100 rounded-xl overflow-hidden p-8 flex justify-center max-h-[70vh] overflow-y-auto no-scrollbar relative border border-surface-200">
+          <div className="transform origin-top transition-transform duration-300" style={{ transform: 'scale(1)', width: '800px' }}>
+            <ProposalPDFPreview proposal={previewProposal} />
           </div>
         </div>
       </Modal>
