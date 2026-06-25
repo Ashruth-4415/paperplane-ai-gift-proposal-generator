@@ -283,12 +283,6 @@ export default function LoginPage() {
     }
   };
 
-  const autofillDemo = (user) => {
-    setEmail(user.email);
-    setPassword(user.password || 'password123');
-    setError('');
-    setActiveTab('login');
-  };
 
   return (
     <div className="min-h-screen bg-surface-950 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans">
@@ -470,26 +464,7 @@ export default function LoginPage() {
               </form>
             )}
 
-            {/* Demo accounts */}
-            <div className="mt-8 border-t border-surface-800/60 pt-6">
-              <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-3">Quick Login (Demo Accounts)</p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => autofillDemo({email: 'customer@company.in'})}
-                  className="px-3 py-2 bg-surface-950 hover:bg-surface-800 border border-surface-800 hover:border-brand-500/30 rounded-xl text-left transition-all duration-200"
-                >
-                  <p className="text-xs font-bold text-emerald-400">Customer Portal</p>
-                  <p className="text-[10px] text-surface-400 truncate">customer@company.in</p>
-                </button>
-                <button
-                  onClick={() => autofillDemo({email: 'Ashruth@paperplane.in'})}
-                  className="px-3 py-2 bg-surface-950 hover:bg-surface-800 border border-surface-800 hover:border-brand-500/30 rounded-xl text-left transition-all duration-200"
-                >
-                  <p className="text-xs font-bold text-indigo-400">Admin Portal</p>
-                  <p className="text-[10px] text-surface-400 truncate">Ashruth@paperplane.in</p>
-                </button>
-              </div>
-            </div>
+
           </div>
         </div>
     </div>
