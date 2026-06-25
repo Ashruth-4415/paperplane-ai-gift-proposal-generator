@@ -217,6 +217,13 @@ export default function LoginPage() {
   const { loginUser, showToast, isAuthenticated, currentUser, users } = useApp();
   const navigate = useNavigate();
 
+  const [activeTab, setActiveTab]     = useState('login');
+  const [email, setEmail]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [name, setName]               = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [error, setError]             = useState('');
+
   /* Already-logged-in redirect */
   if (isAuthenticated && currentUser) {
     const role = currentUser.role || 'customer';
@@ -226,13 +233,6 @@ export default function LoginPage() {
       return <Navigate to="/customer/dashboard" replace />;
     }
   }
-
-  const [activeTab, setActiveTab]     = useState('login');
-  const [email, setEmail]             = useState('');
-  const [password, setPassword]       = useState('');
-  const [name, setName]               = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [error, setError]             = useState('');
 
   /* Public email domains to reject */
   const publicDomains = [
