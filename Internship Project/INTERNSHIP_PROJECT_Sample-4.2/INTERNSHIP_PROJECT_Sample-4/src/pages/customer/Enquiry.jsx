@@ -10,6 +10,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { formatDate, formatRelativeTime, formatCurrency } from '../../utils/formatters';
 import { useApp } from '../../context/AppContext';
+import api from '../../utils/api';
 
 const ENQUIRY_STATUSES = {
   Open: { label: 'Open', bg: 'bg-blue-100/80', text: 'text-blue-700', border: 'border-blue-300/60', icon: Clock },
@@ -38,6 +39,26 @@ export default function EnquiryPortal() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [chatMessage, setChatMessage] = useState('');
   const chatEndRef = useRef(null);
+
+  const downloadProposalPDF = async (proposalId) => {
+    try {
+      showToast('Generating PDF...', 'info');
+      const response = await api.get(`/proposals/${proposalId}/pdf`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Proposal_${proposalId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast('PDF downloaded successfully!');
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to download PDF. Please try again.', 'error');
+    }
+  };
 
   const handleSendMessage = () => {
     if (!chatMessage.trim() || !selectedTicket) return;
@@ -729,10 +750,10 @@ export default function EnquiryPortal() {
                           if (match) pId = match[1];
                         }
                       }
-                      setSelectedTicket(null);
                       if (pId) {
-                        navigate(`/customer/proposals/${pId}`);
+                        downloadProposalPDF(pId);
                       } else {
+                        setSelectedTicket(null);
                         navigate('/customer/store');
                       }
                     }}
