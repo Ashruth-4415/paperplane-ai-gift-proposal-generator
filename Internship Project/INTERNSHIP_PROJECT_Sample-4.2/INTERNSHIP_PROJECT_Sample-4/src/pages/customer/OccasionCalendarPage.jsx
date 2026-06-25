@@ -133,7 +133,7 @@ export default function OccasionCalendarPage() {
           <button
             type="button"
             onClick={() => setAddEventModal(true)}
-            className="h-11 px-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-[#ffffff] text-xs font-bold rounded-xl shadow-lg hover:shadow-purple-500/20 transition-all flex items-center gap-1.5"
+            className="h-11 px-5 bg-brand-600 hover:bg-brand-500 text-[#ffffff] text-xs font-bold rounded-xl shadow-lg hover:shadow-purple-500/20 transition-all flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" />
             <span>Add Event</span>
@@ -476,7 +476,7 @@ export default function OccasionCalendarPage() {
             </button>
             <button 
               onClick={handleAddEvent}
-              className="px-5 h-11 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-[#ffffff] text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5"
+              className="px-5 h-11 bg-brand-600 hover:bg-brand-500 text-[#ffffff] text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Create Event</span>

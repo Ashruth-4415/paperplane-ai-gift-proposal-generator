@@ -137,7 +137,7 @@ export default function StoreManager() {
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-5 py-2.5 rounded-[14px] text-sm font-semibold shadow-lg hover:shadow-purple-500/25 transition-all duration-300 border border-white/10"
+          className="flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-500 text-white px-5 py-2.5 rounded-[14px] text-sm font-semibold shadow-lg hover:shadow-brand-500/25 hover:shadow-brand-500/40 transition-all duration-300 border border-white/10"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Product</span>
@@ -166,7 +166,7 @@ export default function StoreManager() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2.5 rounded-[16px] text-xs font-semibold border whitespace-nowrap transition-all duration-200 ${
                 activeCategory === cat
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-[#ffffff] border-purple-500/30 shadow-md'
+                  ? 'bg-brand-600 text-[#ffffff] border-purple-500/30 shadow-md'
                   : 'bg-[#ffffff] text-slate-600 border-[#000000] hover:text-slate-950 hover:bg-slate-50'
               }`}
             >

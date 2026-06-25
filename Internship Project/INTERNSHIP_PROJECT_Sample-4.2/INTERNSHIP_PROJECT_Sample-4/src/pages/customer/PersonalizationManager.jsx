@@ -389,7 +389,7 @@ export default function PersonalizationManager() {
               type="button"
               disabled={saving}
               onClick={handleSave}
-              className="flex-1 h-12 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 flex items-center justify-center gap-1.5 shadow-lg hover:shadow-purple-500/25 hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
+              className="flex-1 h-12 rounded-xl text-xs font-extrabold text-white bg-brand-600 hover:bg-brand-500 transition-all duration-300 flex items-center justify-center gap-1.5 shadow-lg hover:shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
             >
               {saving ? (
                 <>
@@ -845,7 +845,7 @@ export default function PersonalizationManager() {
               <span className="text-xs font-bold text-slate-350">{selectedProduct.label} Mockup View</span>
               <button 
                 onClick={() => setShowFullPreview(false)}
-                className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors"
+                className="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-colors"
               >
                 Close View
               </button>

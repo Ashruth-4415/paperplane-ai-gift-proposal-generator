@@ -333,7 +333,7 @@ export default function ProposalDashboard() {
                   <button
                     onClick={() => handleApproveOrder(selectedOrder)}
                     disabled={actionLoading}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-purple-500/15 disabled:opacity-55"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-brand-500/25 hover:shadow-brand-500/40 disabled:opacity-55"
                   >
                     <CheckCircle className="w-3.5 h-3.5" />
                     <span>Approve & Pack</span>

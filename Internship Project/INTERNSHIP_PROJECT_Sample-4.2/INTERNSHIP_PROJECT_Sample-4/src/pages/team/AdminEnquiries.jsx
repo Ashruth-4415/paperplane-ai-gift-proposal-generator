@@ -287,7 +287,7 @@ export default function AdminEnquiries() {
                         <button
                           onClick={() => handleAssignCoordinator(selected)}
                           disabled={savingId === selected.id}
-                          className="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-400 text-white rounded-lg text-xs font-bold transition-all"
+                          className="px-2.5 py-1 bg-brand-600 hover:bg-brand-500 disabled:bg-slate-100 disabled:text-slate-400 text-white rounded-lg text-xs font-bold transition-all"
                         >
                           Assign
                         </button>
@@ -423,7 +423,7 @@ export default function AdminEnquiries() {
                           placeholder="Reply to customer..."
                           className="flex-1 bg-[#ffffff] border border-[#000000] rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 transition-colors placeholder-slate-400"
                         />
-                        <button onClick={handleSendMessage} disabled={!chatMessage.trim()} className="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-450 text-[#ffffff] rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg">
+                        <button onClick={handleSendMessage} disabled={!chatMessage.trim()} className="px-4 py-2 bg-brand-600 hover:bg-brand-500 disabled:bg-slate-100 disabled:text-slate-450 text-[#ffffff] rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg">
                           <Send className="w-4 h-4" />
                         </button>
                       </div>

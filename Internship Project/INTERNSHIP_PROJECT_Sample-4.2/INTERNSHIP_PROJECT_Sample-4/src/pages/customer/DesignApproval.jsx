@@ -463,7 +463,7 @@ export default function DesignApproval() {
                         <button
                           type="button"
                           onClick={() => handleApprove(design.id)}
-                          className="flex-1 h-11 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-[#ffffff] text-xs font-bold rounded-xl shadow-lg hover:shadow-purple-500/20 transition-all flex items-center justify-center gap-1.5"
+                          className="flex-1 h-11 bg-brand-600 hover:bg-brand-500 text-[#ffffff] text-xs font-bold rounded-xl shadow-lg hover:shadow-purple-500/20 transition-all flex items-center justify-center gap-1.5"
                         >
                           <ThumbsUp className="w-3.5 h-3.5" />
                           <span>Approve</span>

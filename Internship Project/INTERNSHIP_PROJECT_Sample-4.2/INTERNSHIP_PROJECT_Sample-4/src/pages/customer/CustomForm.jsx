@@ -241,7 +241,7 @@ function CustomMultiSelect({ label, options, selected = [], onChange }) {
               onClick={() => toggleOption(opt)}
               className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all duration-200 ${
                 isSelected 
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-500/30 shadow-md shadow-purple-500/15' 
+                  ? 'bg-brand-600 text-white border-purple-500/30 shadow-md shadow-brand-500/25 hover:shadow-brand-500/40' 
                   : 'bg-[#ffffff] text-slate-600 border-slate-400 hover:border-purple-500 hover:text-purple-600 hover:bg-purple-50'
               }`}
             >
@@ -438,7 +438,7 @@ export default function CustomForm() {
           </button>
           <button 
             onClick={() => navigate('/customer/enquiries')}
-            className="flex-1 py-3 text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-1.5"
+            className="flex-1 py-3 text-sm font-bold bg-brand-600 hover:bg-brand-500 text-white rounded-xl shadow-lg hover:shadow-brand-500/25 hover:shadow-brand-500/40 transition-all flex items-center justify-center gap-1.5"
           >
             <span>Track in Enquiry Portal</span>
             <ArrowRight className="w-4 h-4" />
@@ -606,7 +606,7 @@ export default function CustomForm() {
                 type="button"
                 disabled={!isStepValid()}
                 onClick={() => setStep(s => s + 1)}
-                className="px-6 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all duration-300 flex items-center gap-1.5 hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
+                className="px-6 h-12 bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-brand-500/25 hover:shadow-brand-500/40 transition-all duration-300 flex items-center gap-1.5 hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
               >
                 <span>Next</span>
                 <ArrowRight className="w-4 h-4" />
@@ -616,7 +616,7 @@ export default function CustomForm() {
                 type="button"
                 disabled={loading || !isStepValid()}
                 onClick={submit}
-                className="px-6 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all duration-300 flex items-center gap-1.5 hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
+                className="px-6 h-12 bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-brand-500/25 hover:shadow-brand-500/40 transition-all duration-300 flex items-center gap-1.5 hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
               >
                 {loading ? (
                   <>
