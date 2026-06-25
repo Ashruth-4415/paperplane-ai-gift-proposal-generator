@@ -744,9 +744,9 @@ export default function EnquiryPortal() {
                     onClick={() => {
                       let pId = selectedTicket.proposalId;
                       if (!pId && selectedTicket.chatHistory) {
-                        const msg = selectedTicket.chatHistory.find(m => m.text.includes('custom proposal (PRO-'));
+                        const msg = selectedTicket.chatHistory.find(m => m.text.includes('custom proposal ('));
                         if (msg) {
-                          const match = msg.text.match(/\((PRO-[A-Z0-9-]+)\)/);
+                          const match = msg.text.match(/custom proposal \(([^)]+)\)/);
                           if (match) pId = match[1];
                         }
                       }
