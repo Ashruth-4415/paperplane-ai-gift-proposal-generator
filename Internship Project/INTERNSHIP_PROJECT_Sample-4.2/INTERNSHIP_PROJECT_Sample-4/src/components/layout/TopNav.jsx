@@ -201,7 +201,7 @@ export default function TopNav({ onMenuClick }) {
             {activeUser?.avatar?.startsWith('http') ? (
               <img src={activeUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
-              activeUser?.avatar || 'U'
+              activeUser?.name?.charAt(0).toUpperCase() || 'U'
             )}
           </div>
           <div className="hidden md:block">
@@ -217,7 +217,7 @@ export default function TopNav({ onMenuClick }) {
                 {activeUser?.avatar?.startsWith('http') ? (
                   <img src={activeUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  activeUser?.avatar || 'U'
+                  activeUser?.name?.charAt(0).toUpperCase() || 'U'
                 )}
               </div>
               <div className="min-w-0">

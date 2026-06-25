@@ -284,8 +284,12 @@ export default function AdminDash() {
           {activeCustomers.map(user => (
             <div key={user.id} className="bg-surface-800/50 border border-surface-700/50 p-4 rounded-xl flex items-center justify-between hover:bg-surface-800 transition-colors">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-200/60 shadow-sm shrink-0">
-                  {user.avatar || user.name.charAt(0)}
+                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-200/60 shadow-sm shrink-0 overflow-hidden">
+                  {user.avatar?.startsWith('http') ? (
+                    <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    user.name?.charAt(0).toUpperCase() || 'U'
+                  )}
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-surface-100">{user.name}</h4>
