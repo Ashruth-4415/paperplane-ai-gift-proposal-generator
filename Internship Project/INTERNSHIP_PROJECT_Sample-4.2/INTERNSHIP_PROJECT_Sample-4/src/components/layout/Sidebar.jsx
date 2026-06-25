@@ -44,7 +44,7 @@ export default function Sidebar({ mobile = false, onClose }) {
     <motion.aside 
       layout
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className={`flex flex-col framer-glass transition-all duration-300 z-40 ${collapsed ? 'w-[72px]' : 'w-[260px]'} ${mobile ? 'h-full rounded-none border-r border-white/[0.05]' : 'h-[calc(100vh-32px)] my-4 ml-4 rounded-[24px]'}`}
+      className={`flex flex-col bg-surface-950/95 backdrop-blur-2xl border border-surface-800 shadow-2xl transition-all duration-300 z-40 ${collapsed ? 'w-[72px]' : 'w-[260px]'} ${mobile ? 'h-full rounded-none border-y-0 border-l-0' : 'h-[calc(100vh-32px)] my-4 ml-4 rounded-[24px]'}`}
     >
       {/* Logo */}
       <div className={`flex items-center gap-3 px-5 py-5 border-b border-white/[0.04] ${collapsed ? 'justify-center px-2' : ''}`}>

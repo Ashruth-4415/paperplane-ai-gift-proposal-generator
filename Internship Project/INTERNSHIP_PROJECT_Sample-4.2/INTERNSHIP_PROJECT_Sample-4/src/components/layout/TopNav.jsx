@@ -3,18 +3,9 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Bell, Search, ChevronRight, Menu, X, CheckCheck, AlertTriangle, Clock, MessageSquare } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatRelativeTime } from '../../utils/formatters';
+import { NAV_LINKS } from '../../utils/constants';
 
-const mockSearchResults = [
-  { label: 'Customer Overview', path: '/customer/dashboard' },
-  { label: 'Online Gift Order', path: '/customer/store' },
-  { label: 'Custom Gift Form', path: '/customer/custom-form' },
-  { label: 'Branding Upload Portal', path: '/customer/personalize' },
-  { label: 'Design Approvals', path: '/customer/design-approvals' },
-  { label: 'Inventory', path: '/customer/inventory' },
-  { label: 'Occasion Calendar', path: '/customer/calendar' },
-  { label: 'Return Request', path: '/customer/returns' },
-  { label: 'Corporate Enquiry Portal', path: '/customer/enquiries' },
-];
+
 
 function getBreadcrumbs(pathname) {
   const parts = pathname.split('/').filter(Boolean);
@@ -49,7 +40,7 @@ export default function TopNav({ onMenuClick }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [profileOpen, setProfileOpen] = useState(false);
-  const { notifications, unreadCount, markRead, markAllRead, activeUser, signOut, tickets, proposals, orders } = useApp();
+  const { notifications, unreadCount, markRead, markAllRead, activeUser, activeRole, signOut, tickets, proposals, orders } = useApp();
   const crumbs = getBreadcrumbs(location.pathname);
   const notifRef = useRef(null);
   const searchRef = useRef(null);
@@ -57,7 +48,8 @@ export default function TopNav({ onMenuClick }) {
 
   // Dynamic search results
   const dynamicSearchResults = useMemo(() => {
-    const results = [...mockSearchResults];
+    const roleLinks = NAV_LINKS[activeRole] || NAV_LINKS.customer;
+    const results = roleLinks.map(link => ({ label: link.label, path: link.path }));
     const isCustomer = activeUser?.role === 'customer';
     
     // Add tickets
@@ -102,7 +94,7 @@ export default function TopNav({ onMenuClick }) {
 
   const filtered = searchQuery
     ? dynamicSearchResults.filter(r => r.label.toLowerCase().includes(searchQuery.toLowerCase()))
-    : mockSearchResults;
+    : dynamicSearchResults;
 
   return (
     <header className="h-16 lg:mt-4 lg:mx-4 lg:rounded-[20px] bg-surface-950/40 backdrop-blur-3xl border-b border-white/[0.04] lg:border lg:shadow-glass flex items-center px-5 gap-4 sticky top-0 lg:top-4 z-30 transition-all duration-300">
