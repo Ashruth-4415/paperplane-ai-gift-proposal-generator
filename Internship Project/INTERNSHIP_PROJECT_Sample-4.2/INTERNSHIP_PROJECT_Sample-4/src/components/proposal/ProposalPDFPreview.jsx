@@ -51,7 +51,7 @@ export default function ProposalPDFPreview({ proposal }) {
             <tbody>
               <tr><td className="py-1" style={{ color: '#64748b' }}>Occasion</td><td className="py-1 font-semibold text-right" style={{ color: '#1e293b' }}>{proposal.occasion}</td></tr>
               <tr><td className="py-1" style={{ color: '#64748b' }}>Target Quantity</td><td className="py-1 font-semibold text-right" style={{ color: '#1e293b' }}>{proposal.quantity?.toLocaleString()} units</td></tr>
-              <tr><td className="py-1" style={{ color: '#64748b' }}>Budget Per Unit</td><td className="py-1 font-semibold text-right" style={{ color: '#1e293b' }}>{formatCurrency(cs?.total || proposal.budget)}</td></tr>
+              <tr><td className="py-1" style={{ color: '#64748b' }}>Budget Per Unit</td><td className="py-1 font-semibold text-right" style={{ color: '#1e293b' }}>{formatCurrency(proposal.budget)}</td></tr>
               <tr><td className="py-1" style={{ color: '#64748b' }}>Delivery Target</td><td className="py-1 font-semibold text-right" style={{ color: '#1e293b' }}>{formatDate(proposal.deliveryTimeline)}</td></tr>
             </tbody>
           </table>
@@ -101,9 +101,27 @@ export default function ProposalPDFPreview({ proposal }) {
       <div className="mt-6 mb-20">
         <h3 className="text-sm font-bold uppercase tracking-wider pb-2 mb-4" style={{ color: '#0284c7', borderBottom: '1px solid #cbd5e1' }}>Estimated Cost Summary</h3>
         <div className="rounded-xl p-6" style={{ backgroundColor: '#f8fafc', border: '1px solid #cbd5e1' }}>
+          {proposal.aiRecommendations && proposal.aiRecommendations.length > 0 && (
+            <div className="flex justify-between items-start mb-4 pb-4" style={{ borderBottom: '1px solid #e2e8f0' }}>
+              <span className="text-sm font-semibold mt-1" style={{ color: '#64748b' }}>Items Breakdown</span>
+              <div className="text-right">
+                {proposal.aiRecommendations.map(rec => (
+                  <div key={rec.id} className="text-sm mb-1" style={{ color: '#475569' }}>
+                    {rec.quantity || proposal.quantity}x {rec.product} <span style={{ color: '#94a3b8' }}>@ {formatCurrency(rec.price)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-lg font-bold" style={{ color: '#1e293b' }}>Total Investment</span>
-            <span className="text-2xl font-black" style={{ color: '#0284c7' }}>{formatCurrency(cs?.total ?? 0)}</span>
+            <span className="text-2xl font-black" style={{ color: '#0284c7' }}>
+              {formatCurrency(
+                proposal.aiRecommendations && proposal.aiRecommendations.length > 0
+                  ? proposal.aiRecommendations.reduce((sum, rec) => sum + ((rec.price || 0) * (rec.quantity || proposal.quantity || 0)), 0)
+                  : (cs?.total ?? 0)
+              )}
+            </span>
           </div>
         </div>
       </div>
