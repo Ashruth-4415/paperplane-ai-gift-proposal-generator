@@ -756,7 +756,7 @@ export default function EnquiryPortal() {
                         value={chatMessage} onChange={e => setChatMessage(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Type your message..."
-                        className="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all placeholder-slate-400"
+                        className="flex-1 bg-[#ffffff] border border-slate-300 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all placeholder-slate-400"
                       />
                       <button onClick={handleSendMessage} disabled={!chatMessage.trim()} className="px-4 py-2 bg-brand-600 hover:bg-brand-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg">
                         <Send className="w-4 h-4" />
