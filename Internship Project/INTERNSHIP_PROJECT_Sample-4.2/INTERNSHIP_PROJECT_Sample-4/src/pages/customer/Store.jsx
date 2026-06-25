@@ -185,22 +185,6 @@ export default function GiftOrder() {
           transform: translateY(-1px);
         }
 
-        .premium-btn-cart {
-          position: relative;
-          background: linear-gradient(135deg, #a855f7, #6366f1);
-          color: #ffffff;
-          border-radius: 14px;
-          overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          box-shadow: 0 4px 15px -3px rgba(168, 85, 247, 0.3);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-btn-cart:hover:not(:disabled) {
-          transform: translateY(-1px);
-          box-shadow: 0 0 25px rgba(168, 85, 247, 0.5), 0 4px 15px -3px rgba(99, 102, 241, 0.4);
-          background: linear-gradient(135deg, #b55fe6, #7477f8);
-        }
 
         .premium-btn-cart-disabled {
           background: rgba(239, 68, 68, 0.06) !important;
@@ -436,9 +420,9 @@ export default function GiftOrder() {
                   <button
                     disabled={!product.inStock}
                     onClick={() => addToCart(product)}
-                    className={`premium-btn-cart w-full py-3 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 mt-auto ${
+                    className={`w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 mt-auto ${
                       product.inStock 
-                        ? '' 
+                        ? 'bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-px' 
                         : 'premium-btn-cart-disabled'
                     }`}
                   >
