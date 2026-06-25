@@ -201,7 +201,7 @@ export default function CustomerDashboard() {
             <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-105 transition-transform">
               <CheckSquare className="w-5 h-5" />
             </div>
-            <h4 className="text-sm font-bold text-surface-200 mb-1">Mockup Approvals</h4>
+            <h4 className="text-sm font-bold text-surface-200 mb-1">Approvals</h4>
             <p className="text-xs text-surface-500">Approve designs for production or write modification notes.</p>
           </div>
 
