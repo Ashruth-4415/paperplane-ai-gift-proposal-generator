@@ -1,4 +1,8 @@
 import datetime
+import json
+import os
+from groq import Groq
+from flask import current_app
 from app.extensions import db
 from app.models.proposal_version import ProposalVersion
 from app.models.proposal_item import ProposalItem
@@ -45,8 +49,41 @@ def generate_proposal_content(proposal, engine_preference='RULE_ENGINE'):
         prod_start = proposal.delivery_deadline - datetime.timedelta(days=5)
         delivery_timeline = f"Production starts: {prod_start.strftime('%Y-%m-%d')} | Delivery: {proposal.delivery_deadline.strftime('%Y-%m-%d')}"
     else:
-        # If the student wants to upgrade to AI later, they would call OpenAI here!
-        raise NotImplementedError("AI generation is disabled pending API key setup. Use RULE_ENGINE.")
+        api_key = current_app.config.get('GROQ_API_KEY') or os.environ.get('GROQ_API_KEY')
+        if not api_key:
+            raise ValueError("GROQ_API_KEY is not configured on the server!")
+            
+        client = Groq(api_key=api_key)
+        
+        prompt = f"""
+        You are an expert corporate gifting salesperson. 
+        The client '{proposal.client_name}' from '{proposal.client_company}' has requested a {proposal.occasion.lower()} gift for their team.
+        We are proposing the '{package.name}' which costs ${package.unit_price} each.
+        
+        Return ONLY a JSON object with the following exactly matching keys:
+        "title": A catchy, professional title for the proposal.
+        "executive_summary": A warm, persuasive 2-3 sentence introduction explaining why this package is perfect for them.
+        "closing_pitch": A confident 1-2 sentence closing statement looking forward to working with them.
+        """
+
+        try:
+            response = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama3-8b-8192",
+                response_format={"type": "json_object"},
+                temperature=0.7
+            )
+            result = json.loads(response.choices[0].message.content)
+            
+            title = result.get('title', f"{package.name} Proposal")
+            executive_summary = result.get('executive_summary', "Here is your proposal.")
+            closing_pitch = result.get('closing_pitch', "Thank you.")
+        except Exception as e:
+            print(f"Groq API Error: {str(e)}")
+            raise ValueError("AI Generation failed. Please try again or use the Rule Engine.")
+            
+        prod_start = proposal.delivery_deadline - datetime.timedelta(days=5)
+        delivery_timeline = f"Production starts: {prod_start.strftime('%Y-%m-%d')} | Delivery: {proposal.delivery_deadline.strftime('%Y-%m-%d')}"
         
     # 4. Save the generated draft to the database
     new_version = ProposalVersion(

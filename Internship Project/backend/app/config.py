@@ -21,7 +21,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # AI Service Configuration
-    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+    GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
     
     # JWT Configuration
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'jwt-super-secret-key-change-in-prod')
