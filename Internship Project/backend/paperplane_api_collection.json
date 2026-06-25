@@ -1,0 +1,116 @@
+{
+	"info": {
+		"name": "PaperPlane Corporate Gifting API",
+		"description": "API documentation and test collection for the PaperPlane Backend system.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Health Check",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "http://localhost:5000/api/v1/health",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "health"]
+				}
+			}
+		},
+		{
+			"name": "2. Create Proposal",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_name\": \"John Doe\",\n    \"client_company\": \"Tech Innovators Inc\",\n    \"client_email\": \"john@techinnovators.com\",\n    \"client_type\": \"STARTUP\",\n    \"occasion\": \"FESTIVAL\",\n    \"budget_per_unit\": 2500.50,\n    \"quantity\": 50,\n    \"delivery_deadline\": \"2026-10-15\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/proposals",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "proposals"]
+				}
+			}
+		},
+		{
+			"name": "3. List Proposals (With Filters)",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "http://localhost:5000/api/v1/proposals?status=DRAFT",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "proposals"],
+					"query": [{"key": "status", "value": "DRAFT"}]
+				}
+			}
+		},
+		{
+			"name": "4. Get Proposal Details",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "http://localhost:5000/api/v1/proposals/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "proposals", "1"]
+				}
+			}
+		},
+		{
+			"name": "5. Generate Proposal Draft",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"engine\": \"RULE_ENGINE\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/proposals/1/generate",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "proposals", "1", "generate"]
+				}
+			}
+		},
+		{
+			"name": "6. Update Proposal Status",
+			"request": {
+				"method": "PATCH",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"new_status\": \"SENT\",\n    \"changed_by\": \"Admin User\",\n    \"notes\": \"Sent email to client\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/proposals/1/status",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "proposals", "1", "status"]
+				}
+			}
+		},
+		{
+			"name": "7. Download PDF",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "http://localhost:5000/api/v1/proposals/1/pdf",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "5000",
+					"path": ["api", "v1", "proposals", "1", "pdf"]
+				}
+			}
+		}
+	]
+}

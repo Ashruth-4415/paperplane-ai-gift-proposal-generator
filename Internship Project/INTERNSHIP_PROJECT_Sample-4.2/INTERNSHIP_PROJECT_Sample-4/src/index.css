@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sidebar-width: 256px;
+  --sidebar-collapsed-width: 68px;
+  --topnav-height: 64px;
+  --transition-speed: 0.25s;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-surface-950 text-surface-100;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-800;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-600 rounded-sm;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-brand-500;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-surface-800/60 backdrop-blur-sm border border-surface-700/50 rounded-xl;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-400 to-brand-300 bg-clip-text text-transparent;
+  }
+
+  .nav-link-active {
+    @apply bg-brand-600/20 text-brand-400 border-r-2 border-brand-500;
+  }
+
+  .nav-link {
+    @apply text-surface-400 hover:bg-surface-700/50 hover:text-surface-100 transition-all duration-200;
+  }
+
+  .page-enter {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .scrollable-x {
+    @apply overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ── Select dropdown option highlight ──
+   Makes the selected/hovered option light blue instead of the OS-default gray.
+   The linear-gradient trick is needed because browsers ignore plain background-color
+   on option:checked in Chrome/Edge. */
+select option:checked {
+  background: linear-gradient(#e0f2fe, #e0f2fe);
+  color: #0369a1;
+  font-weight: 600;
+}
+
+select option:hover,
+select option:focus {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
