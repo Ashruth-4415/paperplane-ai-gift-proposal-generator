@@ -5,6 +5,7 @@ from app.models.ticket import Ticket
 from app.models.user import User
 import uuid
 import json
+import random
 
 tickets_bp = Blueprint('tickets', __name__)
 
@@ -21,7 +22,7 @@ def create_ticket():
     user = User.query.filter_by(public_id=get_jwt_identity()).first()
     
     ticket = Ticket(
-        public_id=f"TKT-{uuid.uuid4().hex[:6].upper()}",
+        public_id=f"TKT-{random.randint(1000, 9999)}",
         customer_name=user.name if user else data.get('customerName', 'Unknown'),
         customer_email=user.email if user else data.get('customerEmail', 'Unknown'),
         company_name=user.company if user else data.get('companyName', ''),
