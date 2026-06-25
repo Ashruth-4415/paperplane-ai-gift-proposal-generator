@@ -26,12 +26,17 @@ function Toast({ toast, onClose }) {
 }
 
 export default function AdminLayout() {
-  const { toast, showToast, isAuthenticated } = useApp();
+  const { toast, showToast, isAuthenticated, currentUser } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [, forceUpdate] = useState(0);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Strict role protection: customers cannot view the admin portal
+  if (currentUser && currentUser.role === 'customer') {
+    return <Navigate to="/customer/dashboard" replace />;
   }
 
   useEffect(() => {

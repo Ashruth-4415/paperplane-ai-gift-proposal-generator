@@ -264,6 +264,11 @@ export default function CustomerLayout() {
     return <Navigate to="/login" replace />;
   }
 
+  // Strict role protection: admins cannot view the customer portal
+  if (currentUser && currentUser.role !== 'customer') {
+    return <Navigate to="/admin" replace />;
+  }
+
   return (
     <>
       {/* Paper Plane Intro — shown once per session */}
