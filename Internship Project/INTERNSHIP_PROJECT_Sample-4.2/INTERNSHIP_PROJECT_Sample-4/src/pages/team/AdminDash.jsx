@@ -25,8 +25,17 @@ export default function AdminDash() {
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   
-  const activeCustomers = (users || []).filter(u => u.role === 'customer');
-  // Fallback if users list is empty from backend
+  // Fallback mock customers for demo purposes if backend hasn't supplied any
+  const mockCustomers = [
+    { id: 'U-001', name: 'John Doe', email: 'john@example.com', company: 'Acme Corp', role: 'customer', department: 'HR' },
+    { id: 'U-002', name: 'Jane Smith', email: 'jane@startup.io', company: 'Startup.io', role: 'customer', department: 'Marketing' },
+    { id: 'U-003', name: 'Alice Johnson', email: 'alice@enterprise.com', company: 'Enterprise Ltd', role: 'customer', department: 'Procurement' },
+    { id: 'U-004', name: 'Robert King', email: 'robert.k@globex.net', company: 'Globex', role: 'customer', department: 'Operations' }
+  ];
+  
+  const activeCustomers = (users && users.length > 0) 
+    ? users.filter(u => u.role === 'customer') 
+    : mockCustomers;
   const displayActiveUsers = activeCustomers.length > 0 ? activeCustomers.length : 12;
   
   const thisMonthProposals = proposals.filter(p => {
