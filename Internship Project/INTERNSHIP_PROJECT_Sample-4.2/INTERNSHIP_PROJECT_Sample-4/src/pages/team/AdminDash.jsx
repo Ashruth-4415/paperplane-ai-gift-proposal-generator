@@ -20,6 +20,7 @@ export default function AdminDash() {
   const [showValueModal, setShowValueModal] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
   const [usersSearchQuery, setUsersSearchQuery] = useState('');
+  const [proposalsSearchQuery, setProposalsSearchQuery] = useState('');
   const highPriority = proposals.filter(p => p.priority === 'High' || p.status === 'Designer-Review');
   
   const currentMonth = new Date().getMonth();
@@ -167,34 +168,61 @@ export default function AdminDash() {
       <Modal
         isOpen={showTotalModal}
         onClose={() => setShowTotalModal(false)}
-        title={`All Proposals (${proposals.length})`}
+        title="All Proposals"
         size="lg"
       >
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm border-collapse">
-            <thead>
-              <tr className="border-b border-surface-700/60 text-surface-400 font-medium pb-2">
-                <th className="py-2 pr-4">ID</th>
-                <th className="py-2 pr-4">Client</th>
-                <th className="py-2 pr-4">Occasion</th>
-                <th className="py-2 pr-4">Budget</th>
-                <th className="py-2 pr-4">Status</th>
-                <th className="py-2">Priority</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-700/30 text-surface-200">
-              {proposals.map(p => (
-                <tr key={p.id} className="hover:bg-surface-700/20 transition-colors">
-                  <td className="py-3 pr-4 font-mono text-brand-400 text-xs font-semibold">{p.id}</td>
-                  <td className="py-3 pr-4 font-medium text-surface-100">{p.clientName}</td>
-                  <td className="py-3 pr-4 text-xs text-surface-400">{p.occasion || 'General Gifting'}</td>
-                  <td className="py-3 pr-4 font-semibold text-emerald-400">{formatCurrency(p.budget)}</td>
-                  <td className="py-3 pr-4"><StatusBadge status={p.status} /></td>
-                  <td className="py-3"><PriorityBadge priority={p.priority} /></td>
+        <div className="flex flex-col gap-3">
+          <div className="relative mb-2">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+            <input 
+              type="text" 
+              placeholder="Search by ID or Client..." 
+              value={proposalsSearchQuery}
+              onChange={(e) => setProposalsSearchQuery(e.target.value)}
+              className="w-full bg-surface-900 border border-surface-700 rounded-xl pl-9 pr-4 py-2 text-sm text-surface-100 placeholder:text-surface-500 focus:outline-none focus:border-brand-500 transition-colors"
+            />
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-surface-700/60 text-surface-400 font-medium pb-2">
+                  <th className="py-2 pr-4">ID</th>
+                  <th className="py-2 pr-4">Client</th>
+                  <th className="py-2 pr-4">Occasion</th>
+                  <th className="py-2 pr-4">Budget</th>
+                  <th className="py-2 pr-4">Status</th>
+                  <th className="py-2">Priority</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-surface-700/30 text-surface-200">
+                {proposals
+                  .filter(p => {
+                    const q = proposalsSearchQuery.toLowerCase();
+                    return !q || 
+                           (p.id && String(p.id).toLowerCase().includes(q)) ||
+                           (p.clientName && p.clientName.toLowerCase().includes(q)) ||
+                           (p.client_name && p.client_name.toLowerCase().includes(q));
+                  })
+                  .map(p => (
+                  <tr key={p.id} className="hover:bg-surface-700/20 transition-colors">
+                    <td className="py-3 pr-4 font-mono text-brand-400 text-xs font-semibold">{p.id}</td>
+                    <td className="py-3 pr-4 font-medium text-surface-100">{p.clientName || p.client_name}</td>
+                    <td className="py-3 pr-4 text-xs text-surface-400">{p.occasion || 'General Gifting'}</td>
+                    <td className="py-3 pr-4 font-semibold text-emerald-400">{formatCurrency(p.budget || (p.budget_per_unit * p.quantity) || 0)}</td>
+                    <td className="py-3 pr-4"><StatusBadge status={p.status} /></td>
+                    <td className="py-3"><PriorityBadge priority={p.priority} /></td>
+                  </tr>
+                ))}
+                {proposals.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="py-6 text-center text-surface-400 text-sm">
+                      No proposals found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
         </div>
       </Modal>
 
@@ -202,7 +230,7 @@ export default function AdminDash() {
       <Modal
         isOpen={showPriorityModal}
         onClose={() => setShowPriorityModal(false)}
-        title={`High Priority Proposals (${highPriority.length})`}
+        title="High Priority Proposals"
         size="lg"
       >
         <div className="overflow-x-auto">
@@ -221,13 +249,20 @@ export default function AdminDash() {
               {highPriority.map(p => (
                 <tr key={p.id} className="hover:bg-surface-700/20 transition-colors">
                   <td className="py-3 pr-4 font-mono text-brand-400 text-xs font-semibold">{p.id}</td>
-                  <td className="py-3 pr-4 font-medium text-surface-100">{p.clientName}</td>
+                  <td className="py-3 pr-4 font-medium text-surface-100">{p.clientName || p.client_name}</td>
                   <td className="py-3 pr-4 text-xs text-surface-400">{p.occasion || 'General Gifting'}</td>
-                  <td className="py-3 pr-4 font-semibold text-emerald-400">{formatCurrency(p.budget)}</td>
+                  <td className="py-3 pr-4 font-semibold text-emerald-400">{formatCurrency(p.budget || (p.budget_per_unit * p.quantity) || 0)}</td>
                   <td className="py-3 pr-4"><StatusBadge status={p.status} /></td>
                   <td className="py-3"><PriorityBadge priority={p.priority} /></td>
                 </tr>
               ))}
+              {highPriority.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="py-6 text-center text-surface-400 text-sm">
+                    No high priority proposals found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
