@@ -57,10 +57,15 @@ export default function OccasionCalendarPage() {
 
   const getDateDiffString = (eventDateStr) => {
     const eventDate = new Date(eventDateStr);
-    const refDate = new Date(2026, 5, 1); // June 1, 2026 reference
-    const diffTime = eventDate - refDate;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays >= 0 ? `${diffDays} Days Remaining` : 'Event Passed';
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+    
+    const diffTime = eventDate - currentDate;
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    return diffDays > 0 ? `${diffDays} Days Remaining` : 'Event Passed';
   };
 
   // Extract all events of the current month
@@ -74,8 +79,15 @@ export default function OccasionCalendarPage() {
   );
 
   // Find nearest upcoming event in this month
+  const todayNormalized = new Date();
+  todayNormalized.setHours(0, 0, 0, 0);
+  
   const upcomingEvent = allMonthEvents
-    .filter(e => new Date(e.date) >= new Date(2026, 5, 1))
+    .filter(e => {
+      const d = new Date(e.date);
+      d.setHours(0, 0, 0, 0);
+      return d >= todayNormalized;
+    })
     .sort((a, b) => a.date.localeCompare(b.date))[0];
 
   const selectedEvents = selectedDay ? (events[getDateKey(selectedDay)] || []) : [];
