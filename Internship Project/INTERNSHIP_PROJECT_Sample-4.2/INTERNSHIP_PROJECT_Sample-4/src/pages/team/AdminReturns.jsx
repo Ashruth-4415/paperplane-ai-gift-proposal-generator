@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { RotateCcw, Clock, Package, CheckCircle, XCircle, FileCheck, Search, Filter, ChevronDown, User, Building2, Calendar, AlertTriangle, MessageSquare, Save, Eye, Image } from 'lucide-react';
+import { RotateCcw, Clock, Package, CheckCircle, XCircle, FileCheck, Search, Filter, ChevronDown, User, Building2, Calendar, AlertTriangle, MessageSquare, Save, Eye, Image, Download } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatDate, formatRelativeTime } from '../../utils/formatters';
 
@@ -242,8 +242,8 @@ export default function AdminReturns() {
                     </div>
                     <div className="p-3 bg-surface-900/50 rounded-xl border border-surface-700/30 text-center">
                       <p className="text-surface-500 text-[11px] uppercase tracking-wider mb-1">Photos</p>
-                      <p className="text-surface-100 text-lg font-bold">{selected.hasImages ? '✓' : '—'}</p>
-                      <p className="text-surface-600 text-[10px]">{selected.hasImages ? 'Attached' : 'None'}</p>
+                      <p className="text-surface-100 text-lg font-bold">{selected.photoData ? '1' : '0'}</p>
+                      <p className="text-surface-600 text-[10px]">{selected.photoData ? 'Attached' : 'None'}</p>
                     </div>
                     <div className="p-3 bg-surface-900/50 rounded-xl border border-surface-700/30 text-center">
                       <p className="text-surface-500 text-[11px] uppercase tracking-wider mb-1">Submitted</p>
@@ -266,21 +266,24 @@ export default function AdminReturns() {
                         <p className="text-surface-300 text-sm leading-relaxed">{selected.description}</p>
                       </div>
                     )}
-                    {selected.hasImages && selected.files && selected.files.length > 0 && (
+                    {selected.photoData && (
                       <div className="p-3 bg-surface-900/50 rounded-xl border border-surface-700/30">
-                        <p className="text-surface-500 text-[11px] font-semibold uppercase tracking-wider mb-2">Attached Photos</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {selected.files.map(f => (
-                            <button key={f.id} onClick={() => f.dataUrl && setPreviewImage(f.dataUrl)} className="flex items-center text-left gap-2 p-2 bg-surface-800 border border-surface-700/50 hover:border-brand-500/50 hover:bg-brand-900/10 transition-colors rounded-lg">
-                              <div className="w-8 h-8 bg-brand-900/20 border border-brand-700/30 rounded flex items-center justify-center flex-shrink-0">
-                                <Image className="w-4 h-4 text-brand-400" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-surface-200 text-xs font-medium truncate">{f.name}</p>
-                                <p className="text-surface-500 text-[10px]">{f.size}</p>
-                              </div>
-                            </button>
-                          ))}
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-surface-500 text-[11px] font-semibold uppercase tracking-wider">Attached Photo</p>
+                          <a 
+                            href={selected.photoData} 
+                            download={`return-${selected.id}-photo.jpg`}
+                            className="text-brand-400 hover:text-brand-300 text-xs flex items-center gap-1 font-semibold transition-colors bg-brand-900/20 px-2 py-1 rounded border border-brand-700/30"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Download className="w-3.5 h-3.5" /> Download
+                          </a>
+                        </div>
+                        <div className="relative group rounded-lg overflow-hidden border border-surface-700/50 cursor-pointer" onClick={() => setPreviewImage(selected.photoData)}>
+                           <img src={selected.photoData} alt="Damage preview" className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                             <Eye className="w-6 h-6 text-white" />
+                           </div>
                         </div>
                       </div>
                     )}

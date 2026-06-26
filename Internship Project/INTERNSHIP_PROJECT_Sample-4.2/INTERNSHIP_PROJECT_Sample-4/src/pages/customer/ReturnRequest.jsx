@@ -88,38 +88,39 @@ export default function ReturnRequest() {
 
   const removeFile = (id) => setUploadedFiles(prev => prev.filter(f => f.id !== id));
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.orderId || !form.reason || !form.returnQty) { showToast('Please fill all required fields.', 'error'); return; }
     setLoading(true);
     const selectedOrder = pastOrdersOptions.find(o => o.id === form.orderId);
-    setTimeout(() => {
+    
+    // Simulate slight loading delay for UX
+    await new Promise(r => setTimeout(r, 1500));
+    
+    try {
       const newReturn = {
         id: `RET-00${returns.length + 4}`,
-        order: selectedOrder?.orderId || form.orderId,
-        product: selectedOrder?.product || 'Unknown Product',
+        orderId: selectedOrder?.orderId || form.orderId,
+        itemName: selectedOrder?.product || 'Unknown Product',
         qty: parseInt(form.returnQty),
         reason: form.reason,
-        status: 'Under Review',
-        created: new Date().toISOString(),
-        updated: new Date().toISOString(),
+        status: 'Pending',
         hasImages: uploadedFiles.length > 0,
-        files: uploadedFiles,
-        resolutionNote: '',
-        customerName: currentUser?.name || 'Unknown Customer',
-        customerEmail: currentUser?.email || '',
-        companyName: currentUser?.company || '',
+        photoData: uploadedFiles.length > 0 ? uploadedFiles[0].dataUrl : null,
         description: form.description,
         preferredResolution: form.preferredResolution,
-        adminNote: '',
       };
-      setReturns(prev => [newReturn, ...prev]);
-      addReturnRequest(newReturn);
-      addNotification({ type: 'alert', message: `New return request ${newReturn.id} from ${currentUser?.name || 'Customer'} — ${newReturn.reason}`, role: 'admin', link: '/admin/returns' });
+      const realReturn = await addReturnRequest(newReturn);
+      if (!realReturn) throw new Error("Failed to create return request");
+
+      addNotification({ type: 'alert', message: `New return request ${realReturn.id} from ${currentUser?.name || 'Customer'} — ${newReturn.reason}`, role: 'admin', link: '/admin/returns' });
       setLoading(false);
       setSubmitted(true);
-      setSubmittedId(newReturn.id);
-      showToast(`Return request ${newReturn.id} submitted! Expect a response within 48 hours.`, 'success');
-    }, 1800);
+      setSubmittedId(realReturn.id);
+      showToast(`Return request ${realReturn.id} submitted! Expect a response within 48 hours.`, 'success');
+    } catch (e) {
+      setLoading(false);
+      showToast('Error submitting request', 'error');
+    }
   };
 
   const reset = () => {
