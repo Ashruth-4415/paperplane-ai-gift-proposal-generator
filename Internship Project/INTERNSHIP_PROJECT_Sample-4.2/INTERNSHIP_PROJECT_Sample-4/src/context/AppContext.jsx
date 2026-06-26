@@ -108,7 +108,7 @@ export function AppProvider({ children }) {
     if (state.isAuthenticated) {
       const fetchData = async () => {
         try {
-          const [propRes, tickRes, ordRes, retRes, prodRes, desRes, notifRes, meRes] = await Promise.all([
+          const [propRes, tickRes, ordRes, retRes, prodRes, desRes, notifRes, meRes, usersRes] = await Promise.all([
             api.get('/proposals'),
             api.get('/tickets'),
             api.get('/orders'),
@@ -116,7 +116,8 @@ export function AppProvider({ children }) {
             api.get('/products'),
             api.get('/designs'),
             api.get('/notifications'),
-            api.get('/auth/me')
+            api.get('/auth/me'),
+            api.get('/auth/users')
           ]);
           
           dispatch({ type: 'SET_DATA', payload: {
@@ -129,7 +130,8 @@ export function AppProvider({ children }) {
              notifications: notifRes.data.data || [],
              currentUser: meRes.data.data,
              activeUser: meRes.data.data,
-             activeRole: meRes.data.data.role
+             activeRole: meRes.data.data.role,
+             users: usersRes.data.data || []
           }});
         } catch (e) {
           console.error('Failed to fetch data', e);

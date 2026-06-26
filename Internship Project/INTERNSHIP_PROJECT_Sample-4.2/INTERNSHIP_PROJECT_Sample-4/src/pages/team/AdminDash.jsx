@@ -25,17 +25,7 @@ export default function AdminDash() {
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   
-  // Fallback mock customers for demo purposes if backend hasn't supplied any
-  const mockCustomers = [
-    { id: 'U-001', name: 'John Doe', email: 'john@example.com', company: 'Acme Corp', role: 'customer', department: 'HR' },
-    { id: 'U-002', name: 'Jane Smith', email: 'jane@startup.io', company: 'Startup.io', role: 'customer', department: 'Marketing' },
-    { id: 'U-003', name: 'Alice Johnson', email: 'alice@enterprise.com', company: 'Enterprise Ltd', role: 'customer', department: 'Procurement' },
-    { id: 'U-004', name: 'Robert King', email: 'robert.k@globex.net', company: 'Globex', role: 'customer', department: 'Operations' }
-  ];
-  
-  const activeCustomers = (users && users.length > 0) 
-    ? users.filter(u => u.role === 'customer') 
-    : mockCustomers;
+  const activeCustomers = (users || []).filter(u => u.role === 'customer');
   const displayActiveUsers = activeCustomers.length > 0 ? activeCustomers.length : 12;
   
   const thisMonthProposals = proposals.filter(p => {
@@ -304,25 +294,6 @@ export default function AdminDash() {
                 className="w-full bg-surface-900 border border-surface-700 rounded-xl pl-9 pr-4 py-2 text-sm text-surface-100 placeholder:text-surface-500 focus:outline-none focus:border-brand-500 transition-colors"
               />
             </div>
-            
-            {/* Quick Filter Name Chips */}
-            {activeCustomers.length > 0 && (
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {activeCustomers.map(u => (
-                  <button
-                    key={`chip-${u.id}`}
-                    onClick={() => setUsersSearchQuery(usersSearchQuery === u.name ? '' : u.name)}
-                    className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                      usersSearchQuery === u.name 
-                        ? 'bg-brand-500 text-white shadow-sm' 
-                        : 'bg-surface-800 text-surface-300 hover:bg-surface-700 hover:text-surface-100 border border-surface-700'
-                    }`}
-                  >
-                    {u.name}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
           
           {activeCustomers.filter(u => {

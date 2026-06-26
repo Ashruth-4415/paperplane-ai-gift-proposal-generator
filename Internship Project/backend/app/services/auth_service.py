@@ -36,3 +36,7 @@ def authenticate_user(email, password):
 
 def get_user_by_public_id(public_id):
     return User.query.filter_by(public_id=public_id).first()
+
+def get_all_users():
+    users = User.query.all()
+    return [u.to_dict() for u in users]

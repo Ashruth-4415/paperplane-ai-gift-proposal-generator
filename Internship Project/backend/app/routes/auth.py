@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.services.auth_service import register_user, authenticate_user, get_user_by_public_id
+from app.services.auth_service import register_user, authenticate_user, get_user_by_public_id, get_all_users
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -38,3 +38,8 @@ def get_me():
         return jsonify({"success": False, "error": "User not found"}), 404
         
     return jsonify({"success": True, "data": user.to_dict()}), 200
+
+@auth_bp.route('/auth/users', methods=['GET'])
+def get_users():
+    users_list = get_all_users()
+    return jsonify({"success": True, "data": users_list}), 200
