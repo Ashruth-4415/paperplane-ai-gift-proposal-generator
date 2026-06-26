@@ -22,7 +22,9 @@ export default function AdminDash() {
   const [usersSearchQuery, setUsersSearchQuery] = useState('');
   const [proposalsSearchQuery, setProposalsSearchQuery] = useState('');
   const [highPrioritySearchQuery, setHighPrioritySearchQuery] = useState('');
-  const highPriority = proposals.filter(p => p.priority === 'High' || p.status === 'Designer-Review');
+  
+  const isHighPriority = (p) => p.priority === 'High' || p.status === 'Designer-Review' || (p.budget_per_unit * p.quantity >= 5000) || (p.budget >= 5000);
+  const highPriority = proposals.filter(isHighPriority);
   
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
@@ -212,7 +214,7 @@ export default function AdminDash() {
                     <td className="py-3 pr-4 text-xs text-surface-400">{p.occasion || 'General Gifting'}</td>
                     <td className="py-3 pr-4 font-semibold text-emerald-400">{formatCurrency(p.budget || (p.budget_per_unit * p.quantity) || 0)}</td>
                     <td className="py-3 pr-4"><StatusBadge status={p.status} /></td>
-                    <td className="py-3"><PriorityBadge priority={p.priority} /></td>
+                    <td className="py-3"><PriorityBadge priority={p.priority || (isHighPriority(p) ? 'High' : 'Medium')} /></td>
                   </tr>
                 ))}
                 {proposals.length === 0 && (
@@ -275,7 +277,7 @@ export default function AdminDash() {
                   <td className="py-3 pr-4 text-xs text-surface-400">{p.occasion || 'General Gifting'}</td>
                   <td className="py-3 pr-4 font-semibold text-emerald-400">{formatCurrency(p.budget || (p.budget_per_unit * p.quantity) || 0)}</td>
                   <td className="py-3 pr-4"><StatusBadge status={p.status} /></td>
-                  <td className="py-3"><PriorityBadge priority={p.priority} /></td>
+                  <td className="py-3"><PriorityBadge priority={p.priority || (isHighPriority(p) ? 'High' : 'Medium')} /></td>
                 </tr>
               ))}
               {highPriority.length === 0 && (
