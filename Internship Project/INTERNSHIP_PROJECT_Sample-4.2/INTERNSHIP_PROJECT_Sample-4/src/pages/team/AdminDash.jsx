@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, FileText, TrendingUp, AlertTriangle, RefreshCw, Database, Star, Minus } from 'lucide-react';
+import { Users, FileText, TrendingUp, AlertTriangle, RefreshCw, Database, Star, Minus, Search } from 'lucide-react';
 import MetricCard from '../../components/dashboard/MetricCard';
 import ActionList from '../../components/dashboard/ActionList';
 import PriorityQueue from '../../components/dashboard/PriorityQueue';
@@ -19,6 +19,7 @@ export default function AdminDash() {
   const [showPriorityModal, setShowPriorityModal] = useState(false);
   const [showValueModal, setShowValueModal] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
+  const [usersSearchQuery, setUsersSearchQuery] = useState('');
   const highPriority = proposals.filter(p => p.priority === 'High' || p.status === 'Designer-Review');
   
   const currentMonth = new Date().getMonth();
@@ -283,7 +284,23 @@ export default function AdminDash() {
         size="md"
       >
         <div className="flex flex-col gap-3">
-          {activeCustomers.map(user => (
+          <div className="relative mb-2">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+            <input 
+              type="text" 
+              placeholder="Search by name, email or company..." 
+              value={usersSearchQuery}
+              onChange={(e) => setUsersSearchQuery(e.target.value)}
+              className="w-full bg-surface-900 border border-surface-700 rounded-xl pl-9 pr-4 py-2 text-sm text-surface-100 placeholder:text-surface-500 focus:outline-none focus:border-brand-500 transition-colors"
+            />
+          </div>
+          {activeCustomers.filter(u => {
+            const q = usersSearchQuery.toLowerCase();
+            return !q || 
+                   (u.name && u.name.toLowerCase().includes(q)) || 
+                   (u.email && u.email.toLowerCase().includes(q)) || 
+                   (u.company && u.company.toLowerCase().includes(q));
+          }).map(user => (
             <div key={user.id} className="bg-surface-800/50 border border-surface-700/50 p-4 rounded-xl flex items-center justify-between hover:bg-surface-800 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-200/60 shadow-sm shrink-0 overflow-hidden">
@@ -305,6 +322,17 @@ export default function AdminDash() {
               </div>
             </div>
           ))}
+          {activeCustomers.filter(u => {
+            const q = usersSearchQuery.toLowerCase();
+            return !q || 
+                   (u.name && u.name.toLowerCase().includes(q)) || 
+                   (u.email && u.email.toLowerCase().includes(q)) || 
+                   (u.company && u.company.toLowerCase().includes(q));
+          }).length === 0 && (
+            <div className="text-center py-6 text-surface-400 bg-surface-800/30 rounded-xl border border-surface-700/30">
+              No users match your search.
+            </div>
+          )}
         </div>
       </Modal>
     </div>
