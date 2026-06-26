@@ -284,16 +284,38 @@ export default function AdminDash() {
         size="md"
       >
         <div className="flex flex-col gap-3">
-          <div className="relative mb-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
-            <input 
-              type="text" 
-              placeholder="Search by name, email or company..." 
-              value={usersSearchQuery}
-              onChange={(e) => setUsersSearchQuery(e.target.value)}
-              className="w-full bg-surface-900 border border-surface-700 rounded-xl pl-9 pr-4 py-2 text-sm text-surface-100 placeholder:text-surface-500 focus:outline-none focus:border-brand-500 transition-colors"
-            />
+          <div className="flex flex-col gap-2 mb-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+              <input 
+                type="text" 
+                placeholder="Search by name, email or company..." 
+                value={usersSearchQuery}
+                onChange={(e) => setUsersSearchQuery(e.target.value)}
+                className="w-full bg-surface-900 border border-surface-700 rounded-xl pl-9 pr-4 py-2 text-sm text-surface-100 placeholder:text-surface-500 focus:outline-none focus:border-brand-500 transition-colors"
+              />
+            </div>
+            
+            {/* Quick Filter Name Chips */}
+            {activeCustomers.length > 0 && (
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                {activeCustomers.map(u => (
+                  <button
+                    key={`chip-${u.id}`}
+                    onClick={() => setUsersSearchQuery(usersSearchQuery === u.name ? '' : u.name)}
+                    className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      usersSearchQuery === u.name 
+                        ? 'bg-brand-500 text-white shadow-sm' 
+                        : 'bg-surface-800 text-surface-300 hover:bg-surface-700 hover:text-surface-100 border border-surface-700'
+                    }`}
+                  >
+                    {u.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+          
           {activeCustomers.filter(u => {
             const q = usersSearchQuery.toLowerCase();
             return !q || 
