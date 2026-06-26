@@ -46,7 +46,7 @@ export default function ProposalDetails() {
     setTimeout(() => {
       setApproving(false);
       
-      const unitBudget = proposal.budget / proposal.quantity;
+      const unitBudget = (proposal.budget ? (proposal.budget / proposal.quantity) : (proposal.budget_per_unit || 0));
 
       const getOccasionSuitability = (product, occasion) => {
         if (!occasion) return true;
@@ -246,7 +246,7 @@ export default function ProposalDetails() {
       addNotification({
         role: 'admin',
         type: 'reminder',
-        message: `Status Update: You approved the design mockup for ${proposal.clientName}.`,
+        message: `Status Update: You approved the design mockup for ${(proposal.clientName || proposal.client_name || 'Unknown')}.`,
         link: `/admin/proposals/${proposal.id}`
       });
 
@@ -269,7 +269,7 @@ export default function ProposalDetails() {
         message: `Proposal Ready: Your AI corporate gift proposal for the ${occasionName} is ready to view.`,
         link: '/customer/store',
         customerEmail: proposal.contactEmail,
-        companyName: proposal.clientName
+        companyName: (proposal.clientName || proposal.client_name || 'Unknown')
       });
 
       const firstRec = proposal.aiRecommendations?.[0]?.product || 'Leather Notebooks';
@@ -280,7 +280,7 @@ export default function ProposalDetails() {
         message: `Order Confirmed: Your bulk order for ${qty} ${firstRec} has been confirmed.`,
         link: '/customer/store',
         customerEmail: proposal.contactEmail,
-        companyName: proposal.clientName
+        companyName: (proposal.clientName || proposal.client_name || 'Unknown')
       });
 
       showToast('Proposal approved successfully!', 'success');
@@ -298,7 +298,7 @@ export default function ProposalDetails() {
       addNotification({
         role: 'admin',
         type: 'alert',
-        message: `Status Update: You rejected the proposal for ${proposal.clientName}.`,
+        message: `Status Update: You rejected the proposal for ${(proposal.clientName || proposal.client_name || 'Unknown')}.`,
         link: `/admin/proposals/${proposal.id}`
       });
 
@@ -321,7 +321,7 @@ export default function ProposalDetails() {
         message: `Action Required: Your personalization design for the ${firstRec} was rejected. Please review feedback.`,
         link: '/customer/design-approvals',
         customerEmail: proposal.contactEmail,
-        companyName: proposal.clientName
+        companyName: (proposal.clientName || proposal.client_name || 'Unknown')
       });
 
       showToast('Proposal sent back for revision.', 'error');
@@ -352,7 +352,7 @@ export default function ProposalDetails() {
       });
       
       pdf.addImage(imgData, 'PNG', 0, 0, 800, 1131);
-      const safeName = proposal.clientName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const safeName = (proposal.clientName || proposal.client_name || 'Unknown').replace(/[^a-z0-9]/gi, '_').toLowerCase();
       pdf.save(`proposal_${proposal.id}_${safeName}.pdf`);
       
       showToast('Proposal exported successfully!', 'success');
@@ -377,7 +377,7 @@ export default function ProposalDetails() {
       type: 'message',
       message: `New message on proposal ${proposal.id} from ${activeRole === 'admin' ? 'coordinator' : 'customer'}.`,
       link: `/${targetRole}/proposals/${proposal.id}`,
-      ...(targetRole === 'customer' ? { customerEmail: proposal.contactEmail, companyName: proposal.clientName } : {})
+      ...(targetRole === 'customer' ? { customerEmail: proposal.contactEmail, companyName: (proposal.clientName || proposal.client_name || 'Unknown') } : {})
     });
     setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
   };
@@ -396,7 +396,7 @@ export default function ProposalDetails() {
         </button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold text-surface-100">{proposal.clientName}</h1>
+            <h1 className="text-2xl font-bold text-surface-100">{(proposal.clientName || proposal.client_name || 'Unknown')}</h1>
             <StatusBadge status={proposal.status} />
             <PriorityBadge priority={proposal.priority} />
           </div>
@@ -557,9 +557,9 @@ export default function ProposalDetails() {
                 { label: 'Contact Person', value: proposal.contactPerson || '—' },
                 { label: 'Email', value: proposal.contactEmail || '—' },
                 { label: 'Quantity', value: `${proposal.quantity?.toLocaleString()} units` },
-                { label: 'Delivery Date', value: formatDate(proposal.deliveryTimeline) },
-                { label: 'Created', value: formatDate(proposal.createdAt) },
-                { label: 'Last Updated', value: formatDate(proposal.updatedAt) },
+                { label: 'Delivery Date', value: formatDate((proposal.deliveryTimeline || proposal.delivery_deadline || proposal.created_at || new Date().toISOString())) },
+                { label: 'Created', value: formatDate((proposal.createdAt || proposal.created_at || new Date().toISOString())) },
+                { label: 'Last Updated', value: formatDate((proposal.updatedAt || proposal.created_at || proposal.createdAt || new Date().toISOString())) },
               ].map(item => (
                 <div key={item.label} className="flex justify-between items-start gap-2 pb-2.5 border-b border-surface-700/30 last:border-0 last:pb-0">
                   <span className="text-surface-500 text-xs flex-shrink-0">{item.label}</span>
@@ -578,7 +578,7 @@ export default function ProposalDetails() {
             <div className="flex flex-col gap-2.5">
               <div className="flex justify-between items-center">
                 <span className="text-surface-200 font-semibold text-sm">Total Investment</span>
-                <span className="text-brand-400 font-bold">{formatCurrency(cs?.total || proposal.budget)}</span>
+                <span className="text-brand-400 font-bold">{formatCurrency(cs?.total || (proposal.budget_per_unit * proposal.quantity) || proposal.budget || 0)}</span>
               </div>
             </div>
           </div>
@@ -614,7 +614,7 @@ export default function ProposalDetails() {
       <Modal isOpen={exportModal} onClose={() => setExportModal(false)} title="Proposal PDF Preview" size="xl"
         footer={<><Button variant="ghost" onClick={() => setExportModal(false)}>Cancel</Button><Button loading={exporting} icon={Download} onClick={handleExport}>Download PDF</Button></>}>
         <div className="flex flex-col gap-3 h-full">
-          <p className="text-surface-300 text-sm">Review the generated PDF preview for <strong className="text-surface-100">{proposal.clientName}</strong>. Click Download PDF to save it.</p>
+          <p className="text-surface-300 text-sm">Review the generated PDF preview for <strong className="text-surface-100">{(proposal.clientName || proposal.client_name || 'Unknown')}</strong>. Click Download PDF to save it.</p>
           <div className="flex-1 bg-slate-900 rounded-xl p-4 overflow-y-auto max-h-[65vh] flex justify-center shadow-inner">
              {/* The wrapper scales it down purely visually so it fits inside the modal without horizontal scrolling */}
              <div className="origin-top" style={{ transform: 'scale(0.8)', marginBottom: '-220px' }}>

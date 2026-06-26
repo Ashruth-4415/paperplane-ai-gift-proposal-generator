@@ -35,10 +35,10 @@ export default function ApprovalBoard({ proposals = [] }) {
                   onClick={() => navigate(`/admin/proposals/${p.id}`)}
                   className="bg-[#ffffff] border border-slate-900/10 rounded-xl p-3 cursor-pointer hover:border-brand-500/50 hover:shadow-card-hover transition-all group"
                 >
-                  <p className="text-surface-100 text-xs font-bold group-hover:text-brand-600 transition-colors truncate">{p.clientName}</p>
+                  <p className="text-surface-100 text-xs font-bold group-hover:text-brand-600 transition-colors truncate">{p.clientName || p.client_name || 'Unknown'}</p>
                   <p className="text-surface-450 text-[10px] font-mono mt-0.5">{p.id}</p>
-                  <p className="text-brand-600 text-xs font-extrabold mt-1.5">{formatCurrency(p.budget)}</p>
-                  <p className="text-surface-500 text-xs mt-0.5">{formatDate(p.deliveryTimeline)}</p>
+                  <p className="text-brand-600 text-xs font-extrabold mt-1.5">{formatCurrency((p.budget_per_unit * p.quantity) || p.budget || 0)}</p>
+                  <p className="text-surface-500 text-xs mt-0.5">{formatDate(p.deliveryTimeline || p.created_at || p.updatedAt)}</p>
                 </div>
               ))}
             </div>

@@ -29,7 +29,8 @@ export default function ProposalDashboard() {
 
   const filteredProposals = proposals.filter(p => {
     const matchStatus = statusFilter === 'All' || p.status === statusFilter;
-    const matchSearch = !search || p.clientName.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase());
+    const clientNameStr = p.clientName || p.client_name || 'Unknown';
+    const matchSearch = !search || clientNameStr.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase());
     return matchStatus && matchSearch;
   });
 
@@ -130,14 +131,14 @@ export default function ProposalDashboard() {
 
   const columns = [
     { key: 'id', label: 'ID', width: '100px', render: v => <span className="font-mono text-brand-400 text-xs">{v}</span> },
-    { key: 'clientName', label: 'Client' },
-    { key: 'clientType', label: 'Type', render: v => <span className="text-surface-400 text-xs">{v}</span> },
+    { key: 'clientName', label: 'Client', render: (_, p) => p.clientName || p.client_name || 'Unknown' },
+    { key: 'clientType', label: 'Type', render: (_, p) => <span className="text-surface-400 text-xs">{p.clientType || p.client_type}</span> },
     { key: 'quantity', label: 'Qty', render: v => v?.toLocaleString() },
-    { key: 'budget', label: 'Budget', render: v => <span className="text-brand-400 font-semibold">{formatCurrency(v)}</span> },
+    { key: 'budget', label: 'Budget', render: (_, p) => <span className="text-brand-400 font-semibold">{formatCurrency((p.budget_per_unit * p.quantity) || p.budget || 0)}</span> },
     { key: 'status', label: 'Status', render: v => <StatusBadge status={v} /> },
-    { key: 'priority', label: 'Priority', render: v => <PriorityBadge priority={v} /> },
-    { key: 'deliveryTimeline', label: 'Delivery', render: v => formatDate(v) },
-    { key: 'updatedAt', label: 'Updated', render: v => formatDate(v) },
+    { key: 'priority', label: 'Priority', render: (_, p) => <PriorityBadge priority={p.priority || (['Draft', 'AI-Processing', 'Designer-Review'].includes(p.status) ? 'High' : 'Medium')} /> },
+    { key: 'deliveryTimeline', label: 'Delivery', render: (_, p) => formatDate(p.deliveryTimeline || p.created_at || p.updatedAt) },
+    { key: 'updatedAt', label: 'Updated', render: (_, p) => formatDate(p.updatedAt || p.created_at || new Date().toISOString()) },
   ];
 
   const orderColumns = [
