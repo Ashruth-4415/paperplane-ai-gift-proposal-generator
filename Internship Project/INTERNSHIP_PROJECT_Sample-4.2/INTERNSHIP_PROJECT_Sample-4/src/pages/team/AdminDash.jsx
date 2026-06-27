@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, FileText, TrendingUp, AlertTriangle, RefreshCw, Database, Star, Minus, Search } from 'lucide-react';
 import MetricCard from '../../components/dashboard/MetricCard';
-import ActionList from '../../components/dashboard/ActionList';
-import PriorityQueue from '../../components/dashboard/PriorityQueue';
-import ApprovalBoard from '../../components/proposal/ApprovalBoard';
 import { useApp } from '../../context/AppContext';
 import Tooltip from '../../components/common/Tooltip';
 import Button from '../../components/common/Button';
@@ -99,17 +96,6 @@ export default function AdminDash() {
           onClick={() => setShowUsersModal(true)}
         />
       </div>
-
-      {/* Board + Actions */}
-      <div>
-        <h2 className="text-surface-100 font-semibold mb-3">Pipeline Board</h2>
-        <ApprovalBoard proposals={proposals} />
-      </div>
-
-      <div className="mt-6 mb-8">
-        <PriorityQueue title="High Priority Proposals" items={highPriority} />
-      </div>
-
 
       {/* Total Proposals Modal */}
       <Modal
