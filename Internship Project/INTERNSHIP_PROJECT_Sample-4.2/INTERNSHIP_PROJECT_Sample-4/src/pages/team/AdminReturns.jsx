@@ -146,17 +146,22 @@ export default function AdminReturns() {
                     : 'bg-surface-800/60 border-surface-700/40 hover:border-surface-600'
                 }`}
               >
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-mono text-xs font-bold text-brand-400">{ret.id}</span>
-                      <span className="text-surface-600 text-xs">·</span>
-                      <span className="text-surface-500 text-xs">{ret.order}</span>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {ret.photoData && (
+                      <img src={ret.photoData} alt="Thumbnail" className="w-10 h-10 rounded object-cover border border-surface-700 shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="font-mono text-xs font-bold text-brand-400">{ret.id}</span>
+                        <span className="text-surface-600 text-xs">·</span>
+                        <span className="text-surface-500 text-xs">{ret.order}</span>
+                      </div>
+                      <p className="text-surface-100 text-sm font-semibold truncate">{ret.product}</p>
+                      <p className="text-surface-500 text-xs mt-0.5 truncate">{ret.reason} · {ret.qty} unit{ret.qty !== 1 ? 's' : ''}</p>
                     </div>
-                    <p className="text-surface-100 text-sm font-semibold truncate">{ret.product}</p>
-                    <p className="text-surface-500 text-xs mt-0.5 truncate">{ret.reason} · {ret.qty} unit{ret.qty !== 1 ? 's' : ''}</p>
                   </div>
-                  <div className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-full border flex-shrink-0 ${cfg.bg} ${cfg.color} ${cfg.border}`}>
+                  <div className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-full border flex-shrink-0 ml-2 ${cfg.bg} ${cfg.color} ${cfg.border}`}>
                     <Icon className="w-3 h-3" /> {ret.status}
                   </div>
                 </div>
