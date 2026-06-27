@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, FileText, TrendingUp, AlertTriangle, RefreshCw, Database, Star, Minus, Search } from 'lucide-react';
+import { Users, FileText, TrendingUp, AlertTriangle, RefreshCw, Database, Star, Minus, Search, Activity, Bell, CheckCircle, Clock, ArrowRight } from 'lucide-react';
 import MetricCard from '../../components/dashboard/MetricCard';
 import { useApp } from '../../context/AppContext';
 import Tooltip from '../../components/common/Tooltip';
@@ -8,10 +8,11 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import StatusBadge, { PriorityBadge } from '../../components/common/StatusBadge';
 import { formatCurrency } from '../../utils/formatters';
+import { Link } from 'react-router-dom';
 
 export default function AdminDash() {
   const navigate = useNavigate();
-  const { proposals, returnRequests, orderedItems, users } = useApp();
+  const { proposals, returnRequests, orderedItems, users, tickets } = useApp();
   const [showTotalModal, setShowTotalModal] = useState(false);
   const [showPriorityModal, setShowPriorityModal] = useState(false);
   const [showValueModal, setShowValueModal] = useState(false);
@@ -42,16 +43,33 @@ export default function AdminDash() {
   
   const totalBudgetThisMonth = thisMonthProposals.filter(p => p.status !== 'Rejected' && p.status !== 'REJECTED').reduce((sum, p) => sum + ((p.budget_per_unit * p.quantity) || p.budget || 0), 0);
 
+  // Generate Action Items
+  const pendingProposals = thisMonthProposals.filter(p => p.status === 'Draft' || p.status === 'Review' || p.status === 'Pending').length;
+  const pendingReturns = (returnRequests || []).filter(r => r.status === 'Pending').length;
+  const openTickets = (tickets || []).filter(t => t.status === 'Open').length;
+
+  const actionItems = [];
+  if (pendingProposals > 0) actionItems.push({ label: `${pendingProposals} Proposals pending review`, link: '/admin/proposals', icon: FileText, color: 'text-brand-500', bg: 'bg-brand-500/10' });
+  if (pendingReturns > 0) actionItems.push({ label: `${pendingReturns} Return requests to process`, link: '/admin/returns', icon: RefreshCw, color: 'text-amber-500', bg: 'bg-amber-500/10' });
+  if (openTickets > 0) actionItems.push({ label: `${openTickets} Support tickets open`, link: '/admin/enquiries', icon: AlertTriangle, color: 'text-rose-500', bg: 'bg-rose-500/10' });
+
+  // Generate Recent Activity
+  const allActivity = [
+    ...thisMonthProposals.map(p => ({ type: 'proposal', id: p.id || p.public_id, title: `Proposal ${p.id || p.public_id} created`, date: parseDateSafely(p.created_at || p.createdAt) })),
+    ...(returnRequests || []).map(r => ({ type: 'return', id: r.id || r.public_id, title: `Return Request ${r.id || r.public_id} submitted`, date: parseDateSafely(r.created_at || r.created || r.date) })),
+    ...(tickets || []).map(t => ({ type: 'ticket', id: t.id || t.public_id, title: `Ticket ${t.id || t.public_id} opened`, date: parseDateSafely(t.created_at || t.createdAt) }))
+  ].sort((a, b) => b.date - a.date).slice(0, 5);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-surface-100">Admin Overview</h1>
-          <p className="text-surface-400 text-sm mt-1">System-wide status and operations control</p>
+          <h1 className="text-2xl font-bold text-surface-100">Overview</h1>
+          <p className="text-surface-400 text-sm mt-1">Platform performance and key metrics</p>
         </div>
-        <div className="flex gap-2">
-          <Tooltip content="Feature requires backend integration" position="left">
-            <Button variant="ghost" disabled icon={Database}>Sync CRM</Button>
+        <div className="flex items-center gap-3">
+          <Tooltip content="System systems normal" position="left">
+            <Button variant="ghost" disabled icon={Database}>API Online</Button>
           </Tooltip>
           <Tooltip content="Feature requires backend integration" position="left">
             <Button variant="ghost" disabled icon={RefreshCw}>Live Inventory</Button>
@@ -95,6 +113,77 @@ export default function AdminDash() {
           color="blue" 
           onClick={() => setShowUsersModal(true)}
         />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
+        {/* Action Items */}
+        <div className="bg-surface-800/50 border border-surface-700/50 rounded-2xl p-6 flex flex-col">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-500">
+              <Bell className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-surface-100 font-bold text-lg">Action Items</h2>
+              <p className="text-surface-400 text-xs">Tasks requiring your attention</p>
+            </div>
+          </div>
+          
+          <div className="flex flex-col gap-3 flex-1">
+            {actionItems.length > 0 ? actionItems.map((item, idx) => (
+              <Link key={idx} to={item.link} className="flex items-center justify-between p-4 bg-surface-900/50 border border-surface-700/50 rounded-xl hover:border-surface-600 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-semibold text-surface-200 group-hover:text-surface-100 transition-colors">{item.label}</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-surface-500 group-hover:text-brand-400 transition-colors" />
+              </Link>
+            )) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-surface-700/50 rounded-xl">
+                <CheckCircle className="w-8 h-8 text-emerald-500/50 mb-2" />
+                <p className="text-surface-300 font-medium">All caught up!</p>
+                <p className="text-surface-500 text-xs mt-1">No pending action items right now.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-surface-800/50 border border-surface-700/50 rounded-2xl p-6 flex flex-col">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400">
+              <Activity className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-surface-100 font-bold text-lg">Recent Activity</h2>
+              <p className="text-surface-400 text-xs">Latest platform events</p>
+            </div>
+          </div>
+          
+          <div className="flex flex-col gap-4 flex-1">
+            {allActivity.length > 0 ? allActivity.map((item, idx) => (
+              <div key={idx} className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <div className={`w-2 h-2 rounded-full mt-1.5 ${item.type === 'proposal' ? 'bg-brand-400' : item.type === 'return' ? 'bg-amber-400' : 'bg-rose-400'}`} />
+                  {idx !== allActivity.length - 1 && <div className="w-px h-full bg-surface-700/50 my-1" />}
+                </div>
+                <div className="flex-1 pb-4">
+                  <p className="text-sm font-semibold text-surface-200">{item.title}</p>
+                  <div className="flex items-center gap-1.5 mt-1 text-xs text-surface-500">
+                    <Clock className="w-3 h-3" />
+                    <span>{item.date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                </div>
+              </div>
+            )) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-surface-700/50 rounded-xl">
+                <Activity className="w-8 h-8 text-surface-600 mb-2" />
+                <p className="text-surface-400 font-medium">No recent activity</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Total Proposals Modal */}
