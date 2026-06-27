@@ -41,35 +41,7 @@ export default function AdminDash() {
   
   const ratedItems = (orderedItems || []).filter(item => item.rating > 0).slice(0, 6);
 
-  const actions = [];
-  
-  // Dynamic return requests under review
-  const pendingReturns = returnRequests?.filter(r => r.status === 'Under Review' || r.status === 'Pending') || [];
-  pendingReturns.forEach(ret => {
-    actions.push({
-      icon: AlertTriangle,
-      label: `Return request ${ret.id} awaits review`,
-      description: `${ret.customerName || ret.customer_name} — ${ret.product || ret.item_name || 'Item'}`,
-      time: ret.created || new Date().toISOString(),
-      urgency: 'high',
-      cta: 'Review',
-      actionPath: '/admin/returns'
-    });
-  });
-
-  // Dynamic proposals awaiting processing or review
-  const pendingProposals = proposals?.filter(p => ['Draft', 'AI-Processing', 'Designer-Review'].includes(p.status)) || [];
-  pendingProposals.forEach(prop => {
-    actions.push({
-      icon: FileText,
-      label: `Proposal ${prop.id} - ${prop.status.replace('-', ' ')}`,
-      description: `${prop.clientName || prop.client_name} — ${prop.occasion || 'Corporate Gifting'}`,
-      time: prop.updatedAt || prop.created_at || prop.createdAt || new Date().toISOString(),
-      urgency: prop.status === 'Designer-Review' ? 'high' : 'medium',
-      cta: 'Review',
-      actionPath: `/admin/proposals/${prop.id}`
-    });
-  });
+  // Removed actions variable and related loops since ActionList was removed
 
   return (
     <div className="flex flex-col gap-6">
@@ -132,8 +104,7 @@ export default function AdminDash() {
         <ApprovalBoard proposals={proposals} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ActionList title="Pending Actions" items={actions} onAction={(item) => { if (item.actionPath) navigate(item.actionPath); }} />
+      <div className="mt-6 mb-8">
         <PriorityQueue title="High Priority Proposals" items={highPriority} />
       </div>
 
