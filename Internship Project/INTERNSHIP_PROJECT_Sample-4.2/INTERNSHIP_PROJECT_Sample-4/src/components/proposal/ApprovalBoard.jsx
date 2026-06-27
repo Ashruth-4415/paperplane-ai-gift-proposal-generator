@@ -15,7 +15,7 @@ export default function ApprovalBoard({ proposals = [] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
       {COLUMNS.map(col => {
-        const items = proposals.filter(p => p.status === col);
+        const items = proposals.filter(p => (p.status || '').toLowerCase() === col.toLowerCase());
         const config = colConfig[col];
         const totalRevenue = items.reduce((sum, p) => sum + ((p.budget_per_unit * p.quantity) || p.budget || 0), 0);
         return (
